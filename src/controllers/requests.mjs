@@ -34,7 +34,7 @@ export default class RequestsController {
 
   static async postRequests(req, res) {
     try {
-      const { userId } = await Utils.getLoggedInUser(req, res);
+      const { userId, name } = await Utils.getLoggedInUser(req, res);
 
       const request = await new Request({
         _id: Utils.generateUniqId(),
@@ -42,7 +42,8 @@ export default class RequestsController {
         location: req.body.location,
         desc: req.body.desc,
         status: 'pending',
-        userId
+        requester: name,
+        userId,
       });
 
       const doc = await request.save();

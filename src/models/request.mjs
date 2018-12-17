@@ -8,6 +8,7 @@ const requestSchema = new Schema({
   status: { type: String, required: true },
   location: { type: String, required: true },
   userId: { type: String, required: true },
+  requester: { type: String, required: true },
   desc: String,
 });
 

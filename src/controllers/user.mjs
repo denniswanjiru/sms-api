@@ -51,10 +51,11 @@ export default class UserController {
         { expiresIn: "1h" }
       );
 
-      const {email, name} = jwtDecode(token);
+      const {email, name, role} = jwtDecode(token);
       res.status(200).json({
         name,
         email,
+        role,
         token
       });
     } catch (error) {
