@@ -4,10 +4,8 @@ import Utils from "../helper/utils.mjs";
 export default class MessagesController {
   static async getMessages(req, res) {
     try {
-      // const { userId } = await Utils.getLoggedInUser(req, res);
-
-      // const messages = await Message.find().where('userId').equals(userId).exec();
-      const messages = await Message.find().exec();
+      const { userId } = await Utils.getLoggedInUser(req, res);
+      const messages = await Message.find().where('senderId').equals(userId).exec();
 
       res.status(200).json({
         messages
@@ -20,7 +18,9 @@ export default class MessagesController {
   static async getMessage(req, res) {
     try {
       const id = req.params.id;
-      const message = await Message.findById(id).exec();
+      const { userId } = await Utils.getLoggedInUser(req, res);
+      const message = await Message.findById(id).where('senderId').equals(userId).exec();
+
       if (message) {
         res.status(200).json({
           message: "Message retrived successfully",
@@ -38,12 +38,12 @@ export default class MessagesController {
 
   static async sendMessage(req, res) {
     try {
-      // const { userId, name } = await Utils.getLoggedInUser(req, res);
+      const { userId } = await Utils.getLoggedInUser(req, res);
 
       const message = await new Message({
         _id: Utils.generateUniqId(),
         status: 'sent',
-        senderId: req.body.senderId,
+        senderId: userId,
         receiverId: req.body.receiverId,
         message: req.body.message
       });
@@ -61,12 +61,21 @@ export default class MessagesController {
   static async updateMessage(req, res) {
     try {
       const id = req.params.id;
-      const message = await Message.updateOne({ _id: id }, { $set: req.body }, { new: true });
-      const updatedMessage = await Message.findById(id);
-      res.status(200).json({
-        message: 'Message was updated successfully',
-        updatedMessage
-      });
+      const { userId } = await Utils.getLoggedInUser(req, res);
+      const message = await Message.findById(id);
+
+      if (message && userId === message.senderId) {
+        await Message.updateOne({ _id: id }, { $set: req.body }, { new: true }).exec();
+        const updatedMessage = await Message.findById(id);
+        res.status(200).json({
+          message: 'Message was updated successfully',
+          updatedMessage
+        });
+      } else {
+        res.status(404).json({
+          message: 'Message was not found'
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -75,10 +84,19 @@ export default class MessagesController {
   static async deleteMessage(req, res) {
     try {
       const id = req.params.id;
-      await Message.remove({ _id: id }).exec();
-      res.status(200).json({
-        message: 'Message was deleted successfully'
-      });
+      const { userId } = await Utils.getLoggedInUser(req, res);
+      const message = await Message.findById(id);
+
+      if (message && userId === message.senderId) {
+        await Message.remove({ _id: id }).exec();
+        res.status(200).json({
+          message: 'Message was deleted successfully'
+        });
+      } else {
+        res.status(404).json({
+          message: 'Message was not found'
+        });
+      }
     } catch (error) {
       console.log(error);
     }

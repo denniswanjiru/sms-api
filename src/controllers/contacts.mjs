@@ -4,10 +4,9 @@ import Utils from "../helper/utils.mjs";
 export default class ContactsController {
   static async getContacts(req, res) {
     try {
-      // const { userId, role } = await Utils.getLoggedInUser(req, res);
+      const { userId } = await Utils.getLoggedInUser(req, res);
 
-      const contacts = await Contact.find().exec();
-      // await Request.find().where('userId').equals(userId).exec();
+      const contacts = await Contact.find().where('userId').equals(userId).exec();
 
       res.status(200).json({
         message: 'Contacts retrived successfully',
@@ -40,12 +39,13 @@ export default class ContactsController {
 
   static async postContacts(req, res) {
     try {
-      // const { userId, name } = await Utils.getLoggedInUser(req, res);
+      const { userId } = await Utils.getLoggedInUser(req, res);
 
       const contact = await new Contact({
         _id: Utils.generateUniqId(),
         name: req.body.name,
-        phone: req.body.phone
+        phone: req.body.phone,
+        userId
       });
 
       const doc = await contact.save();

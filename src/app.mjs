@@ -23,13 +23,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Resources
 app.use(
   '/api/v1/messages',
-  // UtilMiddleware.authenticate,
+  UtilMiddleware.authenticate,
   MessagesRouter
 );
 
 app.use(
   '/api/v1/contacts',
-  // UtilMiddleware.authenticate,
+  UtilMiddleware.authenticate,
   ContactsRouter
 );
 

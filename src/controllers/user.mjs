@@ -9,7 +9,7 @@ export default class UserController {
   static async signup(req, res) {
     try {
       bcrypt.hash(req.body.password, 10, async (err, hash) => {
-        if(err) {
+        if (err) {
           res.status(500).json({
             error: {
               message: err
@@ -19,8 +19,8 @@ export default class UserController {
           const user = await new User({
             _id: Utils.generateUniqId(),
             name: req.body.name,
-            role: 'requester',
             email: req.body.email,
+            phone: req.body.phone,
             password: hash
           });
 
@@ -42,16 +42,16 @@ export default class UserController {
   static async signin(user, req, res, next) {
     try {
       const token = await jwt.sign({
-          name: user[0].name,
-          email: user[0].email,
-          userId: user[0]._id,
-          role: user[0].role,
-        },
+        name: user[0].name,
+        email: user[0].email,
+        userId: user[0]._id,
+        role: user[0].role,
+      },
         process.env.JWT_SECRET_KEY,
         { expiresIn: "1h" }
       );
 
-      const {email, name, role} = jwtDecode(token);
+      const { email, name, role } = jwtDecode(token);
       res.status(200).json({
         name,
         email,
