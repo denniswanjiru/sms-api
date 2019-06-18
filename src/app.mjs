@@ -4,8 +4,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 
-import ApprovalsRouter from './routes/approvals';
-import RequestsRouter from './routes/requests';
+import MessagesRouter from './routes/messages';
+import ContactsRouter from './routes/contacts';
 import ErrorHandler from './middlewares/error';
 import UserRouter from './routes/user';
 import UtilMiddleware from './middlewares/utilMiddlewares.mjs';
@@ -22,17 +22,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Resources
 app.use(
-  '/api/v1/approvals',
-  UtilMiddleware.authenticate,
-  UtilMiddleware.checkUserRole(["admin"]),
-  ApprovalsRouter
+  '/api/v1/messages',
+  // UtilMiddleware.authenticate,
+  MessagesRouter
 );
 
 app.use(
-  '/api/v1/requests',
-  UtilMiddleware.authenticate,
-  UtilMiddleware.checkUserRole(["requester", "admin"]),
-  RequestsRouter
+  '/api/v1/contacts',
+  // UtilMiddleware.authenticate,
+  ContactsRouter
 );
 
 app.use('/api/v1/user', UserRouter);
