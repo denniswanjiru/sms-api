@@ -22,7 +22,6 @@ app.options('*', cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-// app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 // Resources
 app.use(
