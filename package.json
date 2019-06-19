@@ -6,6 +6,9 @@
   "scripts": {
     "start": "nodemon --experimental-modules src/index.mjs"
   },
+  "engines": {
+    "node": "11.x"
+  },
   "dependencies": {
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
